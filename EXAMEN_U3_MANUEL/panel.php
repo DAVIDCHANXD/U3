@@ -2,23 +2,24 @@
 // panel.php
 session_start();
 
-// 1) Proteger la vista: solo si hay sesión
-if (!isset($_SESSION['usuario_email'])) {
-    header('Location: login.php');
-    exit;
-}
+// Opcional pero recomendable: si no hay sesión, manda al login
+// if (!isset($_SESSION['usuario_email'])) {
+//     header('Location: login.php');
+//     exit;
+// }
 
-// 2) Conexión a la BD
+// Conexión PDO
 require_once 'conexion.php';
 
-// 3) Leer categoría desde GET para el filtro
+// 1) Leer categoría desde GET para el filtro
 $categoriaSeleccionada = isset($_GET['categoria']) ? trim($_GET['categoria']) : '';
 
-// 4) Obtener listado de categorías distintas (para el <select>)
+// 2) Obtener listado de categorías distintas (para el <select>)
 $sqlCategorias = "SELECT DISTINCT categoria FROM medicamentos ORDER BY categoria";
-$categoriasRes = $conn->query($sqlCategorias);
+$stmtCat = $pdo->query($sqlCategorias);
+$categorias = $stmtCat->fetchAll(PDO::FETCH_COLUMN); // solo la columna "categoria"
 
-// 5) Construir consulta principal de medicamentos
+// 3) Construir consulta principal de medicamentos
 $sql = "SELECT m.id,
                m.nombre,
                m.categoria,
@@ -29,39 +30,37 @@ $sql = "SELECT m.id,
         INNER JOIN proveedores p ON m.proveedor_id = p.id";
 
 $params = [];
-$types  = "";
 
 if ($categoriaSeleccionada !== '') {
-    $sql .= " WHERE m.categoria = ?";
-    $types .= "s";
-    $params[] = $categoriaSeleccionada;
+    $sql .= " WHERE m.categoria = :categoria";
+    $params[':categoria'] = $categoriaSeleccionada;
 }
 
 $sql .= " ORDER BY m.nombre ASC";
 
-$stmt = $conn->prepare($sql);
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 
-if (!empty($params)) {
-    // bind_param requiere variables por referencia
-    $stmt->bind_param($types, ...$params);
-}
-
-$stmt->execute();
-$result = $stmt->get_result();
+// Traemos todo a un arreglo
+$medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel de inventario</title>
-    <link rel="stylesheet" href="CSS/panel.css"><!-- opcional -->
+    <link rel="stylesheet" href="CSS/panel.css"><!-- tu CSS -->
 </head>
 <body>
 <header>
     <h1>Panel de Inventario – Salud Total</h1>
     <div>
-        <span>Usuario: <?php echo htmlspecialchars($_SESSION['usuario_email']); ?></span>
-        <!-- Si luego creas logout.php -->
+        <span>
+            Usuario:
+            <?php echo isset($_SESSION['usuario_email'])
+                ? htmlspecialchars($_SESSION['usuario_email'])
+                : ' invitado'; ?>
+        </span>
         <!-- <a href="logout.php">Cerrar sesión</a> -->
     </div>
 </header>
@@ -74,14 +73,14 @@ $result = $stmt->get_result();
         <label for="categoria">Filtrar por categoría:</label>
         <select name="categoria" id="categoria">
             <option value="">-- Todas --</option>
-            <?php while ($cat = $categoriasRes->fetch_assoc()): ?>
+            <?php foreach ($categorias as $cat): ?>
                 <option
-                    value="<?php echo htmlspecialchars($cat['categoria']); ?>"
-                    <?php echo ($categoriaSeleccionada === $cat['categoria']) ? 'selected' : ''; ?>
+                    value="<?php echo htmlspecialchars($cat); ?>"
+                    <?php echo ($categoriaSeleccionada === $cat) ? 'selected' : ''; ?>
                 >
-                    <?php echo htmlspecialchars($cat['categoria']); ?>
+                    <?php echo htmlspecialchars($cat); ?>
                 </option>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </select>
         <button type="submit">Filtrar</button>
         <a href="panel.php">Quitar filtro</a>
@@ -115,8 +114,8 @@ $result = $stmt->get_result();
             </tr>
         </thead>
         <tbody>
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
+        <?php if (count($medicamentos) > 0): ?>
+            <?php foreach ($medicamentos as $row): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['id']); ?></td>
                     <td><?php echo htmlspecialchars($row['nombre']); ?></td>
@@ -133,7 +132,7 @@ $result = $stmt->get_result();
                         </a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         <?php else: ?>
             <tr>
                 <td colspan="7">No hay medicamentos registrados.</td>
