@@ -9,7 +9,6 @@ if (!isset($_SESSION['usuario_email'])) {
 }
 
 // 2) Conexión a la BD
-// Ajusta la ruta según dónde tengas tu archivo de conexión
 require_once 'conexion.php';
 
 // 3) Leer categoría desde GET para el filtro
