@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Incluimos la conexión PDO
+require_once __DIR__ . '/conexion.php';
+
 $mensajeError = '';
 $email = '';
 
@@ -11,18 +14,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $clave === '') {
         $mensajeError = 'Por favor ingresa tu correo y tu contraseña.';
     } else {
-        $emailValido = 'admin@correo.com';
-        $claveValida = '12345';
+        try {
+            // 👇 AJUSTA el nombre de la tabla y columnas si es necesario
+            $sql = "SELECT id, email, clave 
+                    FROM usuarios 
+                    WHERE email = :email 
+                    LIMIT 1";
 
-        if ($email === $emailValido && $clave === $claveValida) {
-            // Crear sesión
-            $_SESSION['usuario_email'] = $email;
+            $stmt = $pdo->prepare($sql);           // ✅ ahora usamos $pdo
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $fila = $stmt->fetch();               // fetch() devuelve false si no hay registro
 
-            // Redirigir al panel principal
-            header('Location: panel.php');
-            exit;
-        } else {
-            $mensajeError = 'Credenciales incorrectas. Intenta de nuevo.';
+            if ($fila) {
+                // --- Si la contraseña está en TEXTO PLANO en la BD ---
+                if ($clave === $fila['clave']) {
+
+                    $_SESSION['usuario_id']    = $fila['id'];
+                    $_SESSION['usuario_email'] = $fila['email'];
+
+                    header('Location: panel.php');
+                    exit;
+                } else {
+                    $mensajeError = 'Correo o contraseña incorrectos.';
+                }
+
+                /*
+                // --- Si usas password_hash en la BD, usa esto en vez de la comparación simple ---
+                if (password_verify($clave, $fila['clave'])) {
+                    $_SESSION['usuario_id']    = $fila['id'];
+                    $_SESSION['usuario_email'] = $fila['email'];
+
+                    header('Location: panel.php');
+                    exit;
+                } else {
+                    $mensajeError = 'Correo o contraseña incorrectos.';
+                }
+                */
+
+            } else {
+                $mensajeError = 'Correo o contraseña incorrectos.';
+            }
+        } catch (PDOException $e) {
+            $mensajeError = 'Error al intentar iniciar sesión.';
+            // Si quieres debug:
+            // $mensajeError = 'Error: ' . $e->getMessage();
         }
     }
 }
@@ -32,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="CSS/login.css">
+    <link rel="stylesheet" href="./CSS/login.css">
 </head>
 <body>
 <div class="container">
@@ -72,10 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn">Entrar</button>
         </form>
 
-        <p class="hint">
-            <strong>Demo:</strong> correo: <code>prueba@ejemplo.com</code>,
-            contraseña: <code>12345</code>
-        </p>
+        <a href="index.html">Volver al Inicio</a>
     </div>
 </div>
 </body>

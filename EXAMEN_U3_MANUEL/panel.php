@@ -2,12 +2,6 @@
 // panel.php
 session_start();
 
-// Opcional pero recomendable: si no hay sesión, manda al login
-// if (!isset($_SESSION['usuario_email'])) {
-//     header('Location: login.php');
-//     exit;
-// }
-
 // Conexión PDO
 require_once 'conexion.php';
 
@@ -38,7 +32,7 @@ if ($categoriaSeleccionada !== '') {
 
 $sql .= " ORDER BY m.nombre ASC";
 
-$stmt = $pdo->prepare($sql);
+$stmt = $pdo->prepare($sql); 
 $stmt->execute($params);
 
 // Traemos todo a un arreglo
@@ -49,7 +43,7 @@ $medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panel de inventario</title>
-    <link rel="stylesheet" href="CSS/panel.css"><!-- tu CSS -->
+    <link rel="stylesheet" href="CSS/panel.css">
 </head>
 <body>
 <header>
@@ -61,7 +55,7 @@ $medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 ? htmlspecialchars($_SESSION['usuario_email'])
                 : ' invitado'; ?>
         </span>
-        <!-- <a href="logout.php">Cerrar sesión</a> -->
+        <a href="logout.php">Cerrar sesión</a>
     </div>
 </header>
 
@@ -126,9 +120,7 @@ $medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td>
                         <a href="editar.php?id=<?php echo urlencode($row['id']); ?>">Editar</a>
                         |
-                        <a href="eliminar.php?id=<?php echo urlencode($row['id']); ?>"
-                           onclick="return confirm('¿Seguro que quieres eliminar este medicamento?');">
-                           Eliminar
+                        <a href="eliminar.php?id=<?php echo urlencode($row['id']); ?>" onclick="return confirm('¿Seguro que quieres eliminar este medicamento?');"> Eliminar
                         </a>
                     </td>
                 </tr>

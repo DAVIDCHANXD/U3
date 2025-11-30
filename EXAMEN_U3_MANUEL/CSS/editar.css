@@ -1,0 +1,94 @@
+/* Fondo y fuente básica */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 16px 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+h1 {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Botón */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1976d2;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #145ca5;
+}
+
+/* Mensajes */
+.success-box,
+.error-box {
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.success-box {
+    background-color: #e0f2f1;
+    border: 1px solid #80cbc4;
+}
+
+.error-box {
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+}
+
+/* Link volver */
+.link-back {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #1976d2;
+}
+
+.link-back:hover {
+    text-decoration: underline;
+}

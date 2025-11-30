@@ -1,12 +1,40 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVALUACIÓN PRÁCTICA UNIDAD 3</title>
+    <title>Inicio – Inventario</title>
+    <link rel="stylesheet" href="CSS/index.css">
 </head>
 <body>
-    <p>Hola, bienvenido a la evaluación práctica de la Unidad 3.</p>
-    <p>Por favor, utiliza el siguiente enlace para acceder a la página de inicio de sesión:</p>
+<div class="container">
+    <h1>Sistema de Inventario – Salud Total</h1>
+    <p>Selecciona qué quieres hacer:</p>
+
+    <div class="user-info">
+        <?php if (isset($_SESSION['usuario_email'])): ?>
+            Sesión iniciada como <strong><?php echo htmlspecialchars($_SESSION['usuario_email']); ?></strong>.
+        <?php else: ?>
+            No has iniciado sesión.
+        <?php endif; ?>
+    </div>
+
+    <div class="buttons">
+        <!-- Botón 1: Ver panel -->
+        <a
+            href="<?php echo isset($_SESSION['usuario_email']) ? 'panel.php' : 'login.php'; ?>"
+            class="btn btn-panel"
+        >
+            Ver panel de inventario
+        </a>
+
+        <!-- Botón 2: Iniciar sesión -->
+        <a href="login.php" class="btn btn-login">
+            Iniciar sesión
+        </a>
+    </div>
+</div>
 </body>
 </html>
