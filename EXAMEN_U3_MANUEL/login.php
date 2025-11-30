@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn">Entrar</button>
         </form>
 
-        <a href="index.html">Volver al Inicio</a>
+        <a href="index.php">Volver al Inicio</a>
     </div>
 </div>
 <script src="JS/app.js"></script>
