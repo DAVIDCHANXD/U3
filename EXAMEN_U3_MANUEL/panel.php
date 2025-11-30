@@ -119,9 +119,7 @@ $medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo htmlspecialchars($row['proveedor']); ?></td>
                     <td>
                         <a href="editar.php?id=<?php echo urlencode($row['id']); ?>">Editar</a>
-                        |
-                        <a href="eliminar.php?id=<?php echo urlencode($row['id']); ?>" onclick="return confirm('¿Seguro que quieres eliminar este medicamento?');"> Eliminar
-                        </a>
+                    <a href="eliminar.php?id=<?php echo urlencode($row['id']); ?>" data-confirm="¿Seguro que quieres eliminar este medicamento?"> Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -133,5 +131,6 @@ $medicamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 </section>
+<script src="JS/app.js"></script>
 </body>
 </html>

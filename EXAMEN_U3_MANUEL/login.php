@@ -15,16 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'Por favor ingresa tu correo y tu contraseña.';
     } else {
         try {
-            // 👇 AJUSTA el nombre de la tabla y columnas si es necesario
             $sql = "SELECT id, email, clave 
                     FROM usuarios 
                     WHERE email = :email 
                     LIMIT 1";
 
-            $stmt = $pdo->prepare($sql);           // ✅ ahora usamos $pdo
+            $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
-            $fila = $stmt->fetch();               // fetch() devuelve false si no hay registro
+            $fila = $stmt->fetch();
 
             if ($fila) {
                 // --- Si la contraseña está en TEXTO PLANO en la BD ---
@@ -39,26 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $mensajeError = 'Correo o contraseña incorrectos.';
                 }
 
-                /*
-                // --- Si usas password_hash en la BD, usa esto en vez de la comparación simple ---
-                if (password_verify($clave, $fila['clave'])) {
-                    $_SESSION['usuario_id']    = $fila['id'];
-                    $_SESSION['usuario_email'] = $fila['email'];
-
-                    header('Location: panel.php');
-                    exit;
-                } else {
-                    $mensajeError = 'Correo o contraseña incorrectos.';
-                }
-                */
-
             } else {
                 $mensajeError = 'Correo o contraseña incorrectos.';
             }
         } catch (PDOException $e) {
             $mensajeError = 'Error al intentar iniciar sesión.';
-            // Si quieres debug:
-            // $mensajeError = 'Error: ' . $e->getMessage();
         }
     }
 }
@@ -111,5 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="index.html">Volver al Inicio</a>
     </div>
 </div>
+<script src="JS/app.js"></script>
 </body>
 </html>

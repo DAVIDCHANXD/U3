@@ -152,5 +152,7 @@
     <?php endif; ?>
     <a href="panel.php" class="link-back">Volver al panel</a>
     </div>
+
+<script src="JS/app.js"></script>
 </body>
 </html>

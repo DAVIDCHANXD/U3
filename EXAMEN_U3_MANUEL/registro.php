@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'conexion.php'; // 👈 IMPORTANTE: aquí se crea $pdo
+require_once 'conexion.php';
 
 $mensajeOk = '';
 $mensajeError = '';
@@ -9,7 +9,7 @@ $nombre       = '';
 $categoria    = '';
 $cantidad     = '';
 $precio       = '';
-$proveedor_id = ''; // ahora guardamos el ID del proveedor
+$proveedor_id = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre       = trim($_POST['nombre'] ?? '');
@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'Cantidad, precio y proveedor deben ser valores numéricos.';
     } else {
         try {
-            // NO mandamos id, ni creado_en ni actualizado_en. Los pone MySQL.
             $sql = "INSERT INTO medicamentos (nombre, categoria, cantidad, precio, proveedor_id)
                     VALUES (:nombre, :categoria, :cantidad, :precio, :proveedor_id)";
             $stmt = $pdo->prepare($sql);
@@ -38,13 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $mensajeOk = 'Medicamento registrado correctamente.';
 
-            // Limpiar campos del formulario
             $nombre = $categoria = $cantidad = $precio = $proveedor_id = '';
 
         } catch (Exception $e) {
             $mensajeError = 'Ocurrió un error al registrar el medicamento.';
-            // Si quieres ver el detalle mientras pruebas:
-            // $mensajeError .= ' Detalle: ' . $e->getMessage();
         }
     }
 }
@@ -101,8 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <button type="submit" class="btn">Guardar medicamento</button>
     </form>
-
+    
     <a href="panel.php" class="link-back">← Volver al panel</a>
 </div>
+<script src="JS/app.js"></script>
 </body>
 </html>

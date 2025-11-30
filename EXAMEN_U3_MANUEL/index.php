@@ -1,5 +1,6 @@
 <?php
 session_start();
+$estaLogueado = isset($_SESSION['usuario_email']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,18 +15,25 @@ session_start();
     <p>Selecciona qué quieres hacer:</p>
 
     <div class="user-info">
-        <?php if (isset($_SESSION['usuario_email'])): ?>
-            Sesión iniciada como <strong><?php echo htmlspecialchars($_SESSION['usuario_email']); ?></strong>.
+        <?php if ($estaLogueado): ?>
+            Sesión iniciada como
+            <strong><?php echo htmlspecialchars($_SESSION['usuario_email']); ?></strong>.
         <?php else: ?>
-            No has iniciado sesión.
+            <p>No has iniciado sesión.</p>
+            <p class="nota">
+                ⚠ Para ver el <strong>panel de inventario</strong> primero debes iniciar sesión
+                usando el botón <strong>"Iniciar sesión"</strong> de abajo.
+            </p>
         <?php endif; ?>
     </div>
 
     <div class="buttons">
         <!-- Botón 1: Ver panel -->
         <a
-            href="<?php echo isset($_SESSION['usuario_email']) ? 'panel.php' : 'login.php'; ?>"
+            href="<?php echo $estaLogueado ? 'panel.php' : '#'; ?>"
             class="btn btn-panel"
+            id="btnVerPanel"
+            data-logueado="<?php echo $estaLogueado ? '1' : '0'; ?>"
         >
             Ver panel de inventario
         </a>
@@ -36,5 +44,7 @@ session_start();
         </a>
     </div>
 </div>
+
+<script src="JS/app.js"></script>
 </body>
 </html>

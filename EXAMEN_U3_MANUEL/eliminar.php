@@ -1,8 +1,6 @@
 <?php
 session_start();
 require_once 'conexion.php';
-
-// 1) Verificar sesión
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit();
@@ -11,17 +9,12 @@ if (!isset($_SESSION['usuario_id'])) {
 $mensajeOk    = '';
 $mensajeError = '';
 
-// 2) Tomar el ID por GET
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
 if ($id <= 0) {
     header('Location: panel.php');
     exit();
 }
-
-// 3) Obtener datos del medicamento para mostrar en la confirmación
 $medicamento = null;
-
 try {
     $sql = "SELECT m.*, p.nombre AS proveedor_nombre
             FROM medicamentos m
@@ -38,7 +31,6 @@ try {
     $mensajeError = 'Error al obtener el medicamento.';
 }
 
-// 4) Si el usuario confirma (POST), eliminar
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $medicamento) {
     try {
         $sqlDelete = "DELETE FROM medicamentos WHERE id = :id";
@@ -46,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $medicamento) {
         $stmtDel->execute([':id' => $id]);
 
         $mensajeOk    = 'Medicamento eliminado correctamente.';
-        $medicamento  = null; // ya no existe, ocultamos el formulario
+        $medicamento  = null;
     } catch (Exception $e) {
         $mensajeError = 'Ocurrió un error al eliminar el medicamento.';
     }
@@ -57,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $medicamento) {
 <head>
     <meta charset="UTF-8">
     <title>Eliminar medicamento</title>
-    <!-- Puedes reutilizar el mismo CSS de editar para mantener el estilo sencillo -->
     <link rel="stylesheet" href="CSS/editar.css">
 </head>
 <body>
@@ -108,8 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $medicamento) {
             <button type="submit" class="btn">Sí, eliminar</button>
         </form>
     <?php endif; ?>
-
     <a href="panel.php" class="link-back">← Volver al panel</a>
 </div>
+
+<script src="JS/app.js"></script>
 </body>
 </html>
